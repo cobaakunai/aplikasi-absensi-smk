@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistem Absensi | SMK Pembangunan Bandung Barat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased flex h-screen overflow-hidden">
+    
+    <aside class="w-64 bg-slate-900 text-white flex-col hidden md:flex transition-all duration-300 shadow-xl z-20">
+        <div class="h-16 flex items-center justify-center border-b border-slate-800">
+            <h1 class="text-md font-bold tracking-wide">SMK PBB <span class="text-indigo-400">Absensi</span></h1>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-indigo-600 rounded-lg shadow-md text-sm font-medium transition"><i class="fas fa-chart-pie w-5"></i> Dashboard</a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-sm font-medium transition text-slate-300"><i class="fas fa-users w-5"></i> Data Siswa</a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-sm font-medium transition text-slate-300"><i class="fas fa-file-invoice w-5"></i> Laporan</a>
+        </nav>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-400 text-center">
+            &copy; 2026 Divisi IT SMK PBB
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto relative">
+        
+        <header class="h-16 glass flex items-center justify-between px-4 sm:px-6 shadow-sm sticky top-0 z-10 border-b border-slate-200">
+            <div class="flex items-center gap-3">
+                <button class="md:hidden text-slate-600 hover:text-slate-900 focus:outline-none"><i class="fas fa-bars text-xl"></i></button>
+                <h2 class="text-lg font-semibold text-slate-800 hidden sm:block">Portal Kehadiran Siswa</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center text-sm font-medium text-slate-600 bg-slate-100 px-4 py-1.5 rounded-full border border-slate-200">
+                    <i class="far fa-clock mr-2 text-indigo-500"></i><span id="clock">00:00:00 WIB</span>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold shadow-md cursor-pointer border-2 border-white ring-2 ring-indigo-100">
+                    AD
+                </div>
+            </div>
+        </header>
+
+        <div class="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100 relative overflow-hidden group hover:shadow-md transition-shadow">
+                    <div class="absolute right-0 top-0 w-16 h-16 bg-gradient-to-br from-emerald-100 to-transparent rounded-bl-full z-0 opacity-50"></div>
+                    <div class="flex items-center justify-between relative z-10">
+                        <div>
+                            <p class="text-sm text-slate-500 font-medium mb-1">Total Hadir</p>
+                            <p class="text-3xl font-bold text-slate-800" id="stat-hadir">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-user-check text-xl"></i></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100 relative overflow-hidden group hover:shadow-md transition-shadow">
+                    <div class="absolute right-0 top-0 w-16 h-16 bg-gradient-to-br from-amber-100 to-transparent rounded-bl-full z-0 opacity-50"></div>
+                    <div class="flex items-center justify-between relative z-10">
+                        <div>
+                            <p class="text-sm text-slate-500 font-medium mb-1">Izin / Sakit</p>
+                            <p class="text-3xl font-bold text-slate-800" id="stat-izin">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform"><i class="fas fa-user-clock text-xl"></i></div>
+                    </div>
+                </div>
+                
+                <div class="sm:hidden bg-indigo-600 text-white rounded-2xl shadow-sm p-5 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-indigo-200 font-medium mb-1">Waktu Saat Ini</p>
+                        <p class="text-xl font-bold" id="clock-mobile">00:00</p>
+                    </div>
+                    <i class="far fa-clock text-3xl opacity-50"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 h-fit overflow-hidden">
+                    <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+                        <h3 class="text-lg font-semibold text-slate-800">Entri Absensi</h3>
+                        <p class="text-xs text-slate-500 mt-1">Masukkan data siswa dengan akurat.</p>
+                    </div>
+                    <div class="p-5">
+                        <form id="form-absensi" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">Nomor Induk Siswa (NIS)</label>
+                                <input type="text" id="nis" required autocomplete="off" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm" placeholder="Contoh: 102938">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">Nama Lengkap</label>
+                                <input type="text" id="nama" required autocomplete="off" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm" placeholder="Nama Siswa">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">Status Kehadiran</label>
+                                <select id="status" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm appearance-none cursor-pointer">
+                                    <option value="Hadir">Hadir (On-Time)</option>
+                                    <option value="Izin">Izin (Approved)</option>
+                                    <option value="Sakit">Sakit (Medical)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium py-3 rounded-xl transition duration-200 shadow-md shadow-indigo-200 text-sm flex justify-center items-center gap-2">
+                                <i class="fas fa-save"></i> Rekam Data
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+                    <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-800">Log Pemantauan Real-time</h3>
+                            <p class="text-xs text-slate-500 mt-1">Data tersinkronisasi otomatis dari server.</p>
+                        </div>
+                        <button onclick="fetchData()" class="text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                            <i class="fas fa-sync-alt"></i> <span class="hidden sm:inline">Refresh</span>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-white text-slate-500 text-xs uppercase tracking-wider border-b border-slate-100">
+                                    <th class="px-6 py-4 font-semibold">Waktu Pencatatan</th>
+                                    <th class="px-6 py-4 font-semibold">Identitas Siswa</th>
+                                    <th class="px-6 py-4 font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body" class="text-sm divide-y divide-slate-50">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Manajemen Waktu (Real-time Clock)
+        const updateClock = () => {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('clock').innerText = timeString + ' WIB';
+            document.getElementById('clock-mobile').innerText = timeString;
+        };
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Konfigurasi API
+        const API_URL = '/api/absensi'; // Menggunakan relative path karena frontend dilayani oleh Express
+
+        // Logika Pengiriman Form (POST)
+        document.getElementById('form-absensi').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            // State Loading
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+            btn.disabled = true;
+
+            const payload = {
+                nis: document.getElementById('nis').value,
+                nama: document.getElementById('nama').value,
+                status: document.getElementById('status').value.replace(/ \(.+\)/, '') // Sanitasi string status
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    e.target.reset();
+                    await fetchData();
+                    // Fokus kembali ke input NIS untuk efisiensi entri berturut-turut
+                    document.getElementById('nis').focus();
+                } else {
+                    throw new Error('Gagal menyimpan data ke server.');
+                }
+            } catch (error) {
+                console.error('[API Error]:', error);
+                alert('Infrastruktur Backend belum merespons. Pastikan Node.js Server berjalan.');
+            } finally {
+                // Restore State
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Logika Pengambilan Data (GET)
+        async function fetchData() {
+            const tbody = document.getElementById('table-body');
+            
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const { data } = await response.json();
+                
+                tbody.innerHTML = '';
+                let countHadir = 0, countIzinSakit = 0;
+                
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-slate-400 text-sm italic">Belum ada data absensi tercatat hari ini.</td></tr>`;
+                    return;
+                }
+
+                data.forEach(row => {
+                    const date = new Date(row.waktu);
+                    const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    const dateStr = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                    
+                    // Styling Status Dinamis
+                    let statusClass, iconClass;
+                    if (row.status === 'Hadir') {
+                        statusClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                        iconClass = 'text-emerald-500 fa-check-circle';
+                        countHadir++;
+                    } else if (row.status === 'Sakit') {
+                        statusClass = 'bg-amber-50 text-amber-700 border-amber-200';
+                        iconClass = 'text-amber-500 fa-notes-medical';
+                        countIzinSakit++;
+                    } else {
+                        statusClass = 'bg-blue-50 text-blue-700 border-blue-200';
+                        iconClass = 'text-blue-500 fa-envelope-open-text';
+                        countIzinSakit++;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-indigo-100 group-hover:text-indigo-500 transition-colors">
+                                        <i class="far fa-clock text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-700">${timeStr}</p>
+                                        <p class="text-xs text-slate-400">${dateStr}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-800">${row.nama}</p>
+                                    <p class="text-xs text-slate-500 font-mono mt-0.5">NIS: ${row.nis}</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 w-max ${statusClass}">
+                                    <i class="fas ${iconClass}"></i> ${row.status}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                // Update Widgets
+                document.getElementById('stat-hadir').innerText = countHadir;
+                document.getElementById('stat-izin').innerText = countIzinSakit;
+
+            } catch (error) {
+                console.error('[Sync Error]:', error);
+                tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-red-500 text-sm bg-red-50 font-medium"><i class="fas fa-exclamation-triangle mr-2"></i>Koneksi ke server terputus. Pastikan server Node.js aktif.</td></tr>`;
+            }
+        }
+
+        // Inisialisasi pengambilan data saat aplikasi dimuat
+        fetchData();
+    </script>
+</body>
+</html>
